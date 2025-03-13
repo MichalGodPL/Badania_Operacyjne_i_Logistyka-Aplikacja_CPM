@@ -11,7 +11,7 @@ class API:
             self.tasks.append({
                 "name": task["name"],
                 "duration": float(task["duration"]),
-                "dependencies": task["dependencies"].split(",") if task["dependencies"] else []
+                "dependencies": [dep for dep in task["dependencies"].split(",") if dep != "-"]
             })
         return {"message": "Zadania zostały zapisane"}
 
@@ -25,10 +25,10 @@ class API:
     def calculate_cpm(self, tasks):
         method = tasks[0]["dependencies"].find("-") != -1
         if method:
-            from cpm_successor import calculate_cpm_successor
+            from CPMNastepnik import calculate_cpm_successor
             result = calculate_cpm_successor(tasks)
         else:
-            from cpm_predecessor import calculate_cpm_predecessor
+            from CPMPoprzednik import calculate_cpm_predecessor
             result = calculate_cpm_predecessor(tasks)
         return result
 

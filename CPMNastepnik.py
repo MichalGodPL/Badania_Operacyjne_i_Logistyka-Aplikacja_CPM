@@ -1,12 +1,13 @@
-def calculate_cpm_predecessor(tasks):
+def calculate_cpm_successor(tasks):
     graph = {t["name"]: [] for t in tasks}
     in_degree = {t["name"]: 0 for t in tasks}
     durations = {}
     for t in tasks:
-        durations[t["name"]] = t["duration"]
+        durations[t["name"]] = float(t["duration"])  # Ensure duration is a float
         for dep in t["dependencies"]:
-            graph[dep].append(t["name"])
-            in_degree[t["name"]] += 1
+            if dep != "-":
+                graph[t["name"]].append(dep)
+                in_degree[dep] += 1
 
     queue = [n for n, d in in_degree.items() if d == 0]
     earliest_start = {t["name"]: 0 for t in tasks}

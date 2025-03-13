@@ -291,7 +291,11 @@
         <!-- Card 2 -->
         <div class="card full-width hidden" id="card2">
             <h2>Druga Karta</h2>
-            <p>Treść drugiej karty.</p>
+            <p id="cpmResult">Treść drugiej karty.</p>
+            <div class="chart-container">
+                <canvas id="cpmChart"></canvas>
+            </div>
+            <div id="cpmModelContainer" style="margin-top: 20px;"></div>
         </div>
     </div>
 
@@ -449,11 +453,38 @@
 
             // Call Python API to calculate CPM
             window.pywebview.api.calculate_cpm(tasks).then(response => {
-                alert(response.message);
+                document.getElementById('cpmResult').innerText = response.message;
                 drawCPMChart(response.path);
+                generateCPMModel(response.path);
+                showCard(2); // Switch to the second card to display the result
             }).catch(error => {
                 console.error("Error generating CPM:", error);
                 alert("Wystąpił błąd podczas generowania CPM.");
+            });
+        }
+
+        function generateCPMModel(path) {
+            const container = document.getElementById('cpmModelContainer');
+            container.innerHTML = '';
+
+            path.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.style.border = '1px solid #2A2A2A';
+                taskDiv.style.padding = '10px';
+                taskDiv.style.marginBottom = '10px';
+                taskDiv.style.borderRadius = '5px';
+                taskDiv.style.backgroundColor = '#1A1A1A';
+
+                const taskName = document.createElement('h3');
+                taskName.innerText = `Zadanie: ${task.name}`;
+                taskName.style.margin = '0 0 10px 0';
+
+                const taskDuration = document.createElement('p');
+                taskDuration.innerText = `Czas trwania: ${task.duration}`;
+
+                taskDiv.appendChild(taskName);
+                taskDiv.appendChild(taskDuration);
+                container.appendChild(taskDiv);
             });
         }
 
@@ -565,8 +596,5 @@
             }
         });
     </script>
-    <div class="chart-container">
-        <canvas id="cpmChart"></canvas>
-    </div>
 </body>
 </html>
