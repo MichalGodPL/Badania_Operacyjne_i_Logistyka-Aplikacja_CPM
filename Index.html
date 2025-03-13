@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Analiza Transakcji</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #1E1E1E; /* Darker gray for better contrast */
+            color: #F5F5F5;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-weight: 400;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto auto;
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .container::-webkit-scrollbar {
+            width: 0; /* Safari and Chrome */
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 15px;
+            background-color: #1A1A1A; /* Solid color for minimalism */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); /* Lighter shadow */
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        h1, h2 {
+            text-align: center;
+            font-weight: 700; /* Keep headings bold */
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #2A2A2A;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        input, label, button {
+            display: block;
+            margin: 5px auto; /* Reduced margin to bring label and input closer */
+        }
+
+        input {
+            width: calc(100% - 40px);
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            background-color: #222;
+            color: white;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            opacity: 0;
+        }
+
+        input[type="number"] {
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            width: calc(100% - 40px);
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .small-button {
+            padding: 12px;      /* Increased padding */
+            border-radius: 24px;
+            font-size: 18px;    /* Slightly larger text */
+            width: 120px;       /* Wider button */
+            background-color: #1DB954; /* Spotify-like green */
+            margin-top: 20px; /* Additional space to move button lower */
+        }
+        .small-button:hover {
+            background-color: #178E40; /* Darker green on hover */
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #1A1A1A;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #2A2A2A; /* Changed to solid border for better visibility */
+        }
+
+        th {
+            background-color: #1A1A1A;
+            color: #F5F5F5;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2A2A2A;
+        }
+
+        tr:hover {
+            background-color: #3A3A3A;
+        }
+
+        td {
+            background-color: #1A1A1A; /* Ensure cells have a background color */
+            color: #F5F5F5;
+        }
+
+        .transaction {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        label {
+            font-weight: 400; /* Make label text regular weight */
+        }
+
+        .main-header {
+            background-color: #1A1A1A;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+            margin-bottom: 20px;
+            padding: 1px; /* Much thinner */
+        }
+        .main-header h1 {
+            /* Additional styling */
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .cpm-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .cpm-row label {
+            margin-right: 10px;
+        }
+
+        select {
+            width: calc(100% - 40px);
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            background-color: #222;
+            color: #F5F5F5;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            color: #F5F5F5;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .arrow-left {
+            left: 10px;
+        }
+        .arrow-right {
+            right: 10px;
+        }
+        .arrow:hover {
+            transform: translateY(-50%) scale(1.2);
+            color: #1DB954;
+        }
+        .hidden {
+            display: none;
+        }
+        .card {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .card.hidden {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        .arrow::before {
+            content: '';
+            display: inline-block;
+            border: solid #F5F5F5;
+            border-width: 0 8px 8px 0;
+            padding: 8px;
+        }
+        .arrow-left::before {
+            transform: rotate(135deg);
+        }
+        .arrow-right::before {
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="arrow arrow-left" onclick="prevCard()"></div>
+    <div class="arrow arrow-right" onclick="nextCard()"></div>
+    <div class="container">
+        <div class="card full-width main-header">
+            <h1>METODA CPM APLIKACJA :3</h1>
+        </div>
+        <!-- Card 1 -->
+        <div class="card full-width" id="card1">
+            <h2>Tworzenie Tabelki</h2>
+            <div class="cpm-row" style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+                <div style="display: flex; gap: 15px; align-items: center; justify-content: center;">
+                    <label for="cpmMethod">Wybierz metodę CPM:</label>
+                    <select id="cpmMethod" onchange="updateMethod()" style="width: 180px;">
+                        <option value="Poprzednik">Poprzednik</option>
+                        <option value="Wyraz Następujący">Wyraz Następujący</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; justify-content: center;">
+                    <label for="tableRows">Liczba wierszy:</label>
+                    <input type="number" id="tableRows" value="5" style="width: 70px;">
+                </div>
+            </div>
+            <button class="small-button" onclick="createTaskTable()">Utwórz</button>
+            <div id="tableContainer"></div>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="small-button" onclick="saveTable()">Zapisz Tabelę</button>
+                <button class="small-button" onclick="exportToCSV()">Eksportuj do CSV</button>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="card full-width hidden" id="card2">
+            <h2>Druga Karta</h2>
+            <p>Treść drugiej karty.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentCard = 1;
+
+        function showCard(cardNumber) {
+            const current = document.getElementById(`card${currentCard}`);
+            const next = document.getElementById(`card${cardNumber}`);
+            current.classList.add('hidden');
+            setTimeout(() => {
+                current.style.display = 'none';
+                next.style.display = 'block';
+                setTimeout(() => {
+                    next.classList.remove('hidden');
+                }, 10); // Small delay to trigger transition
+            }, 500); // Match the transition duration
+            currentCard = cardNumber;
+        }
+
+        function prevCard() {
+            const nextCardNumber = currentCard === 1 ? 2 : 1;
+            showCard(nextCardNumber);
+        }
+
+        function nextCard() {
+            const nextCardNumber = currentCard === 2 ? 1 : 2;
+            showCard(nextCardNumber);
+        }
+
+        function createTaskTable() {
+            let rows = parseInt(document.getElementById('tableRows').value);
+            let tableContainer = document.getElementById('tableContainer');
+            tableContainer.innerHTML = "";
+            
+            let table = document.createElement('table');
+            let thead = document.createElement('thead');
+            let headerRow = document.createElement('tr');
+            
+            let th1 = document.createElement('th');
+            th1.innerText = "Nazwa Czynności";
+            let th2 = document.createElement('th');
+            th2.innerText = "Czas Trwania";
+            let th3 = document.createElement('th');
+            th3.innerText = document.getElementById('cpmMethod').value;
+            headerRow.append(th1, th2, th3);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            let tbody = document.createElement('tbody');
+            for (let i = 0; i < rows; i++) {
+                let tr = document.createElement('tr');
+                for (let j = 0; j < 3; j++) {
+                    let td = document.createElement('td');
+                    td.contentEditable = "true";
+
+                    // Dla "Czas Trwania" - tylko cyfry
+                    if (j === 1) {
+                        td.addEventListener('input', (e) => {
+                            e.target.textContent = e.target.textContent.replace(/[^\d]/g, '');
+                        });
+                    }
+
+                    // Dla "Wyraz Następujący" - format "liczba - liczba"
+                    if (j === 2 && document.getElementById('cpmMethod').value === 'Wyraz Następujący') {
+                        td.textContent = "-";
+                        td.addEventListener('input', (e) => {
+                            let value = e.target.textContent.replace(/[^\d-]/g, '');
+                            if (!value.includes('-')) {
+                                value = '-';
+                            }
+                            let [before, after = ""] = value.split('-');
+                            before = before.slice(0,8);
+                            after = after.slice(0,8);
+                            e.target.textContent = before + "-" + after;
+                        });
+                    }
+
+                    // Dla "Wyraz Następujący" - umożliwienie usunięcia całej zawartości
+                    if (j === 2 && document.getElementById('cpmMethod').value === 'Wyraz Następujący') {
+                        td.addEventListener('input', (e) => {
+                            let value = e.target.textContent.replace(/[^\d-]/g, '');
+                            e.target.textContent = value;
+                        });
+                    }
+
+                    function setCaretAfterDash(el) {
+                        let dashIndex = el.textContent.indexOf('-') + 1;
+                        let range = document.createRange();
+                        let sel = window.getSelection();
+                        range.setStart(el.firstChild, dashIndex);
+                        range.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                        el.focus();
+                    }
+
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+        }
+
+        function updateMethod() {
+            document.getElementById('methodLabel').innerText =
+                document.getElementById('cpmMethod').value;
+        }
+
+        function saveTable() {
+            let table = document.querySelector('#tableContainer table');
+            if (!table) {
+                alert("Brak tabeli do zapisania.");
+                return;
+            }
+
+            let tasks = [];
+            let rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                let cells = row.querySelectorAll('td');
+                tasks.push({
+                    name: cells[0].innerText,
+                    duration: cells[1].innerText,
+                    dependencies: cells[2].innerText
+                });
+            });
+
+            // Call Python API to save tasks
+            window.pywebview.api.add_task(tasks).then(response => {
+                alert(response.message);
+            }).catch(error => {
+                console.error("Error saving tasks:", error);
+                alert("Wystąpił błąd podczas zapisywania tabeli.");
+            });
+        }
+
+        function exportToCSV() {
+            let table = document.querySelector('#tableContainer table');
+            if (!table) {
+                alert("Brak tabeli do eksportowania.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            let rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                let cells = row.querySelectorAll('th, td');
+                let rowContent = Array.from(cells).map(cell => cell.innerText).join(",");
+                csvContent += rowContent + "\r\n";
+            });
+
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "tasks.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Save CSV to desktop using Python API
+            window.pywebview.api.save_csv_to_desktop(csvContent).then(response => {
+                alert(response.message);
+            }).catch(error => {
+                console.error("Error exporting CSV:", error);
+                alert("Wystąpił błąd podczas eksportowania do CSV.");
+            });
+        }
+    </script>
+</body>
+</html>
