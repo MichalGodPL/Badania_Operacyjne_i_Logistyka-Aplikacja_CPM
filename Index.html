@@ -284,6 +284,7 @@
             <div id="tableContainer"></div>
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
                 <button class="small-button" onclick="saveTable()">Zapisz Tabelę</button>
+                <button class="small-button" onclick="generateCPM()">Wygeneruj</button>
                 <button class="small-button" onclick="exportToCSV()">Eksportuj do CSV</button>
             </div>
         </div>
@@ -428,6 +429,61 @@
             });
         }
 
+        function generateCPM() {
+            let table = document.querySelector('#tableContainer table');
+            if (!table) {
+                alert("Brak tabeli do wygenerowania CPM.");
+                return;
+            }
+
+            let tasks = [];
+            let rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                let cells = row.querySelectorAll('td');
+                tasks.push({
+                    name: cells[0].innerText,
+                    duration: cells[1].innerText,
+                    dependencies: cells[2].innerText
+                });
+            });
+
+            // Call Python API to calculate CPM
+            window.pywebview.api.calculate_cpm(tasks).then(response => {
+                alert(response.message);
+                drawCPMChart(response.path);
+            }).catch(error => {
+                console.error("Error generating CPM:", error);
+                alert("Wystąpił błąd podczas generowania CPM.");
+            });
+        }
+
+        function drawCPMChart(path) {
+            const ctx = document.getElementById('cpmChart').getContext('2d');
+            const labels = path.map(task => task.name);
+            const data = path.map(task => task.duration);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Czas trwania',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
         function exportToCSV() {
             let table = document.querySelector('#tableContainer table');
             if (!table) {
@@ -509,5 +565,8 @@
             }
         });
     </script>
+    <div class="chart-container">
+        <canvas id="cpmChart"></canvas>
+    </div>
 </body>
 </html>

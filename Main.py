@@ -22,32 +22,15 @@ class API:
             f.write(csv_content)
         return {"message": f"Plik CSV zapisany na pulpicie: {file_path}"}
 
-    def calculate_cpm(self):
-        # Przykładowa implementacja obliczeń metody CPM
-        graph = {t["name"]: [] for t in self.tasks}
-        in_degree = {t["name"]: 0 for t in self.tasks}
-        durations = {}
-        for t in self.tasks:
-            durations[t["name"]] = t["duration"]
-            for dep in t["dependencies"]:
-                graph[dep].append(t["name"])
-                in_degree[t["name"]] += 1
-
-        queue = [n for n, d in in_degree.items() if d == 0]
-        earliest_start = {t["name"]: 0 for t in self.tasks}
-        earliest_finish = {}
-
-        while queue:
-            current = queue.pop(0)
-            earliest_finish[current] = earliest_start[current] + durations[current]
-            for neighbor in graph[current]:
-                earliest_start[neighbor] = max(earliest_start[neighbor], earliest_finish[current])
-                in_degree[neighbor] -= 1
-                if in_degree[neighbor] == 0:
-                    queue.append(neighbor)
-
-        total_duration = max(earliest_finish.values()) if earliest_finish else 0
-        return {"message": f"Szacowany czas realizacji (CPM): {total_duration}"}
+    def calculate_cpm(self, tasks):
+        method = tasks[0]["dependencies"].find("-") != -1
+        if method:
+            from cpm_successor import calculate_cpm_successor
+            result = calculate_cpm_successor(tasks)
+        else:
+            from cpm_predecessor import calculate_cpm_predecessor
+            result = calculate_cpm_predecessor(tasks)
+        return result
 
 api = API()
 
