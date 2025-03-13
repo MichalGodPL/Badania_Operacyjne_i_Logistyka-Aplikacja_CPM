@@ -276,7 +276,11 @@
                     <input type="number" id="tableRows" value="5" style="width: 70px;">
                 </div>
             </div>
-            <button class="small-button" onclick="createTaskTable()">Utwórz</button>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="small-button" onclick="createTaskTable()">Utwórz</button>
+                <button class="small-button" onclick="document.getElementById('uploadCSV').click()">Wgraj CSV</button>
+                <input type="file" id="uploadCSV" accept=".csv" style="display: none;" onchange="uploadCSV(event)">
+            </div>
             <div id="tableContainer"></div>
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
                 <button class="small-button" onclick="saveTable()">Zapisz Tabelę</button>
@@ -455,6 +459,55 @@
                 alert("Wystąpił błąd podczas eksportowania do CSV.");
             });
         }
+
+        function uploadCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csvContent = e.target.result;
+                const rows = csvContent.split('\n').map(row => row.split(','));
+
+                let tableContainer = document.getElementById('tableContainer');
+                tableContainer.innerHTML = "";
+
+                let table = document.createElement('table');
+                let thead = document.createElement('thead');
+                let headerRow = document.createElement('tr');
+
+                rows[0].forEach(header => {
+                    let th = document.createElement('th');
+                    th.innerText = header;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                let tbody = document.createElement('tbody');
+                rows.slice(1).forEach(row => {
+                    let tr = document.createElement('tr');
+                    row.forEach(cell => {
+                        let td = document.createElement('td');
+                        td.contentEditable = "true";
+                        td.innerText = cell;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                tableContainer.appendChild(table);
+            };
+            reader.readAsText(file);
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                prevCard();
+            } else if (event.key === 'ArrowRight') {
+                nextCard();
+            }
+        });
     </script>
 </body>
 </html>
