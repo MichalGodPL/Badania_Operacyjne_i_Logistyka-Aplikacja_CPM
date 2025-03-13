@@ -296,6 +296,7 @@
                 <canvas id="cpmChart"></canvas>
             </div>
             <div id="cpmModelContainer" style="margin-top: 20px;"></div>
+            <div id="cpmCalculationsContainer" style="margin-top: 20px;"></div>
         </div>
     </div>
 
@@ -456,6 +457,7 @@
                 document.getElementById('cpmResult').innerText = response.message;
                 drawCPMChart(response.path);
                 generateCPMModel(response.path);
+                displayCalculations(response.calculations);
                 showCard(2); // Switch to the second card to display the result
             }).catch(error => {
                 console.error("Error generating CPM:", error);
@@ -513,6 +515,43 @@
                     }
                 }
             });
+        }
+
+        function displayCalculations(calculations) {
+            const container = document.getElementById('cpmCalculationsContainer');
+            container.innerHTML = '';
+
+            let table = document.createElement('table');
+            let thead = document.createElement('thead');
+            let headerRow = document.createElement('tr');
+
+            let headers = ["Zadanie", "Najwcześniejszy Start", "Najwcześniejsze Zakończenie", "Najpóźniejszy Start", "Najpóźniejsze Zakończenie"];
+            headers.forEach(header => {
+                let th = document.createElement('th');
+                th.innerText = header;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            let tbody = document.createElement('tbody');
+            calculations.forEach(calc => {
+                let tr = document.createElement('tr');
+                let tdTask = document.createElement('td');
+                tdTask.innerText = calc.task;
+                let tdES = document.createElement('td');
+                tdES.innerText = calc.earliest_start;
+                let tdEF = document.createElement('td');
+                tdEF.innerText = calc.earliest_finish;
+                let tdLS = document.createElement('td');
+                tdLS.innerText = calc.latest_start;
+                let tdLF = document.createElement('td');
+                tdLF.innerText = calc.latest_finish;
+                tr.append(tdTask, tdES, tdEF, tdLS, tdLF);
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            container.appendChild(table);
         }
 
         function exportToCSV() {

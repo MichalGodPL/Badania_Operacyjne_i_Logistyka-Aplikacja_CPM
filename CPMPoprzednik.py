@@ -1,3 +1,5 @@
+from CPMLiczenie import calculate_cpm
+
 def calculate_cpm_predecessor(tasks):
     graph = {t["name"]: [] for t in tasks}
     in_degree = {t["name"]: 0 for t in tasks}
@@ -24,7 +26,8 @@ def calculate_cpm_predecessor(tasks):
 
     total_duration = max(earliest_finish.values()) if earliest_finish else 0
     critical_path = get_critical_path(earliest_start, earliest_finish, durations)
-    return {"message": f"Szacowany czas realizacji (CPM): {total_duration}", "path": critical_path}
+    result = calculate_cpm(tasks)
+    return result
 
 def get_critical_path(earliest_start, earliest_finish, durations):
     critical_path = []
