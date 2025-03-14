@@ -1,112 +1,70 @@
+import networkx as nx
 import matplotlib.pyplot as plt
 
 def calculate_cpm(tasks):
-    """
-    Oblicza pełne parametry metody CPM dla metody poprzedników
-    """
-    graph = {t["name"]: [] for t in tasks}
-    in_degree = {t["name"]: 0 for t in tasks}
-    durations = {t["name"]: float(t["duration"]) for t in tasks}
+    G = nx.DiGraph()
+    durations = {}
     
-    for t in tasks:
-        for dep in t["dependencies"].split(','):
-            dep = dep.strip()
-            if dep != "-":
-                graph[dep].append(t["name"])
-                in_degree[t["name"]] += 1
+    for task in tasks:
+        G.add_node(task["name"], duration=float(task["duration"]))
+        durations[task["name"]] = float(task["duration"])
+        
+        if task["dependencies"] != "-":
+            for dep in task["dependencies"].split(','):
+                G.add_edge(dep.strip(), task["name"])
     
-    # Krok do przodu (Forward Pass)
-    queue = [n for n, d in in_degree.items() if d == 0]
-    earliest_start = {t["name"]: 0 for t in tasks}
-    earliest_finish = {}
+    earliest_start = {node: 0 for node in G.nodes}
+    for node in nx.topological_sort(G):
+        earliest_start[node] = max((earliest_start[pre] + durations[pre]) for pre in G.predecessors(node)) if G.in_edges(node) else 0
     
-    while queue:
-        current = queue.pop(0)
-        earliest_finish[current] = earliest_start[current] + durations[current]
-        for neighbor in graph[current]:
-            earliest_start[neighbor] = max(earliest_start.get(neighbor, 0), earliest_finish[current])
-            in_degree[neighbor] -= 1
-            if in_degree[neighbor] == 0:
-                queue.append(neighbor)
-
-    if not earliest_start:
-        return {"message": "Brak danych do obliczenia CPM", "critical_path": [], "calculations": []}
-    
+    earliest_finish = {node: earliest_start[node] + durations[node] for node in G.nodes}
     total_duration = max(earliest_finish.values())
+    latest_finish = {node: total_duration for node in G.nodes}
     
-    # Krok do tyłu (Backward Pass)
-    latest_finish = {task: total_duration for task in earliest_finish}
-    latest_start = {task: total_duration - durations[task] for task in earliest_finish}
+    for node in reversed(list(nx.topological_sort(G))):
+        latest_finish[node] = min((latest_finish[succ] - durations[succ]) for succ in G.successors(node)) if G.out_edges(node) else total_duration
     
-    for task in reversed(list(earliest_finish.keys())):
-        for neighbor in graph[task]:
-            latest_finish[task] = min(latest_finish[task], latest_start[neighbor])
-        latest_start[task] = latest_finish[task] - durations[task]
+    latest_start = {node: latest_finish[node] - durations[node] for node in G.nodes}
+    total_floats = {node: latest_start[node] - earliest_start[node] for node in G.nodes}
+    critical_path = [node for node, tf in total_floats.items() if tf == 0]
     
-    # Obliczanie rezerw czasowych
-    total_floats = {task: latest_start[task] - earliest_start[task] for task in earliest_start}
-    
-    # Wyznaczanie ścieżki krytycznej
-    critical_path = [task for task, r in total_floats.items() if r == 0]
-    
-    calculations = []
-    for task in earliest_finish:
-        calculations.append({
-            "task": task,
-            "earliest_start": earliest_start[task],
-            "earliest_finish": earliest_finish[task],
-            "latest_start": latest_start[task],
-            "latest_finish": latest_finish[task],
-            "total_float": latest_finish[task] - earliest_finish[task],
-            "free_float": latest_start[task] - earliest_start[task]
-        })
+    calculations = [{
+        "task": node,
+        "earliest_start": earliest_start[node],
+        "earliest_finish": earliest_finish[node],
+        "latest_start": latest_start[node],
+        "latest_finish": latest_finish[node],
+        "total_float": total_floats[node]
+    } for node in G.nodes]
     
     return {
-        "message": f"Szacowany czas realizacji (CPM): {max(earliest_finish.values())}",
+        "message": f"Szacowany czas realizacji (CPM): {total_duration}",
         "critical_path": critical_path,
         "calculations": calculations
     }
 
 def visualize_cpm_graph(tasks):
-    """
-    Wizualizuje graf CPM jako diagram zależności AON bez użycia NetworkX
-    """
-    plt.figure(figsize=(10, 6))
-    
-    node_positions = {}
-    for i, task in enumerate(tasks):
-        node_positions[task["name"]] = (i * 2, 5)  # Rozmieszczenie węzłów
-        plt.text(i * 2, 5, task["name"], fontsize=12, ha='center', va='center', bbox=dict(facecolor='lightblue', edgecolor='black'))
-    
+    G = nx.DiGraph()
     for task in tasks:
-        for dep in task["dependencies"].split(','):
-            dep = dep.strip()
-            if dep != "-":
-                x1, y1 = node_positions[dep]
-                x2, y2 = node_positions[task["name"]]
-                plt.plot([x1, x2], [y1, y2], 'k-', lw=2)  # Rysowanie krawędzi
+        G.add_node(task["name"], duration=float(task["duration"]))
+        if task["dependencies"] != "-":
+            for dep in task["dependencies"].split(','):
+                G.add_edge(dep.strip(), task["name"])
     
-    plt.xlim(-1, len(tasks) * 2)
-    plt.ylim(4, 6)
-    plt.axis('off')
-    plt.title("Graf CPM - Model AON")
+    pos = nx.nx_agraph.graphviz_layout(G, prog='dot')
+    plt.figure(figsize=(12, 6))
+    nx.draw(G, pos, with_labels=True, node_color='lightblue', edge_color='black', node_size=2000, font_size=10)
+    plt.title("Graf CPM")
     plt.show()
 
 def visualize_gantt_chart(tasks, earliest_start):
-    """
-    Tworzy wykres Gantta dla harmonogramu ASAP
-    """
-    plt.figure(figsize=(10, 6))
-    yticks = []
-    ylabels = []
-    for i, task in enumerate(tasks):
-        plt.barh(i, task["duration"], left=earliest_start[task["name"]], color='skyblue')
-        yticks.append(i)
-        ylabels.append(task["name"])
-    
-    plt.yticks(yticks, ylabels)
-    plt.xlabel("Czas")
-    plt.ylabel("Zadania")
-    plt.title("Wykres Gantta - Harmonogram ASAP")
-    plt.grid(axis='x', linestyle='--', alpha=0.7)
-    plt.show()
+    import plotly.express as px
+    import pandas as pd
+
+    df = pd.DataFrame(tasks)
+    df['Start'] = df['name'].map(earliest_start)
+    df['Finish'] = df['Start'] + df['duration']
+
+    fig = px.timeline(df, x_start="Start", x_end="Finish", y="name", title="Wykres Gantta")
+    fig.update_yaxes(categoryorder="total ascending")
+    fig.show()

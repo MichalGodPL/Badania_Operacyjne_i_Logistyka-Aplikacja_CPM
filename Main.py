@@ -30,7 +30,8 @@ class API:
         visualize_cpm_graph(tasks)
         return {"message": "Graf CPM został wygenerowany"}
 
-    def visualize_gantt_chart(self, tasks, earliest_start):
+    def visualize_gantt_chart(self, tasks):
+        earliest_start = {task["name"]: task["earliest_start"] for task in tasks}
         visualize_gantt_chart(tasks, earliest_start)
         return {"message": "Wykres Gantta został wygenerowany"}
 

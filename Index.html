@@ -5,7 +5,6 @@
     <title>Model CPM</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="Styles.css">
-
 </head>
 <body>
     <div class="arrow arrow-left" onclick="prevCard()"></div>
@@ -167,6 +166,21 @@
                 generateCPMModel(response.critical_path);
                 displayCalculations(response.calculations);
                 showCard(2); // Switch to the second card to display the result
+
+                // Prepare tasks with earliest_start for Gantt chart
+                let ganttTasks = response.calculations.map(calc => ({
+                    name: calc.task,
+                    duration: calc.earliest_finish - calc.earliest_start,
+                    earliest_start: calc.earliest_start
+                }));
+
+                // Call Python API to visualize Gantt chart
+                window.pywebview.api.visualize_gantt_chart(ganttTasks).then(response => {
+                    console.log(response.message);
+                }).catch(error => {
+                    console.error("Error generating Gantt chart:", error);
+                    alert("Wystąpił błąd podczas generowania wykresu Gantta.");
+                });
             }).catch(error => {
                 console.error("Error generating CPM:", error);
                 alert("Wystąpił błąd podczas generowania CPM.");
