@@ -61,20 +61,20 @@ def visualize_cpm_graph(tasks):
     plt.close()
     return "cpm_graph.png"
 
-def visualize_gantt_chart(tasks, earliest_start):
-    import plotly.express as px
-    import pandas as pd
+# def visualize_gantt_chart(tasks, earliest_start):
+#     import plotly.express as px
+#     import pandas as pd
 
-    df = pd.DataFrame(tasks)
-    df['duration'] = df['duration'].astype(float)
-    df['Start'] = df['name'].map(earliest_start).astype(float)
-    df['Finish'] = df['Start'] + df['duration']
+#     df = pd.DataFrame(tasks)
+#     df['duration'] = df['duration'].astype(float)
+#     df['Start'] = df['name'].map(earliest_start).astype(float)
+#     df['Finish'] = df['Start'] + df['duration']
 
-    print("Gantt chart data:", df.to_dict(orient='records'))  # Debug log
+#     print("Gantt chart data:", df.to_dict(orient='records'))  # Debug log
 
-    fig = px.timeline(df, x_start="Start", x_end="Finish", y="name", title="Wykres Gantta")
-    fig.update_yaxes(categoryorder="total ascending")
-    fig.update_layout(xaxis_type='linear', xaxis_range=[0, max(1, df['Finish'].max())])
-    # fig.write_html("gantt_chart.html")  # Removed - no file creation
-    # Removed return "gantt_chart.html"
-    return None
+#     fig = px.timeline(df, x_start="Start", x_end="Finish", y="name", title="Wykres Gantta")
+#     fig.update_yaxes(categoryorder="total ascending")
+#     fig.update_layout(xaxis_type='linear', xaxis_range=[0, max(1, df['Finish'].max())])
+#     # fig.write_html("gantt_chart.html")  # Removed - no file creation
+#     # Removed return "gantt_chart.html"
+#     return None

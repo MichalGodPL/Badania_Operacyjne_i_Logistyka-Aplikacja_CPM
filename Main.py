@@ -1,6 +1,6 @@
 import webview
 import os
-from CPMLiczenie import calculate_cpm, visualize_cpm_graph, visualize_gantt_chart
+from CPMLiczenie import calculate_cpm, visualize_cpm_graph
 
 class API:
     def __init__(self):
@@ -29,11 +29,6 @@ class API:
     def visualize_cpm_graph(self, tasks):
         graph_path = visualize_cpm_graph(tasks)
         return {"message": "Graf CPM został wygenerowany", "graph_path": graph_path}
-
-    def visualize_gantt_chart(self, tasks):
-        earliest_start = {task["name"]: task["earliest_start"] for task in tasks}
-        gantt_path = visualize_gantt_chart(tasks, earliest_start)
-        return {"message": "Wykres Gantta został wygenerowany", "gantt_path": gantt_path}
 
 api = API()
 

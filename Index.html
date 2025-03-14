@@ -170,12 +170,12 @@
                 showCard(2); // Switch to the second card to display the result
 
                 // Prepare tasks with earliest_start for Gantt chart
-                let ganttTasks = response.calculations.map(calc => ({
-                    name: calc.task,
-                    duration: calc.earliest_finish - calc.earliest_start,
-                    earliest_start: calc.earliest_start
-                }));
-                console.log("Tasks for Gantt:", ganttTasks); // Debug log
+                // let ganttTasks = response.calculations.map(calc => ({
+                //     name: calc.task,
+                //     duration: calc.earliest_finish - calc.earliest_start,
+                //     earliest_start: calc.earliest_start
+                // }));
+                // console.log("Tasks for Gantt:", ganttTasks); // Debug log
 
                 // Call Python API to visualize CPM graph
                 window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
