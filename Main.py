@@ -1,5 +1,4 @@
 import webview
-import json
 import os
 from CPMLiczenie import calculate_cpm, visualize_cpm_graph, visualize_gantt_chart
 
@@ -37,11 +36,10 @@ class API:
 
 api = API()
 
+# Pobranie pełnej ścieżki do pliku Index.html
 html_path = os.path.abspath("Index.html")
-css_path = os.path.abspath("styles.css")
-with open(html_path, "r", encoding="utf-8") as f:
-    html_content = f.read().replace('styles.css', f"file:///{css_path}")
+url = f"file:///{html_path}"
 
 # Tworzenie okna PyWebview i uruchamianie aplikacji
-webview.create_window("Metoda CPM", html=html_content, js_api=api, width=900, height=500)
+webview.create_window("Metoda CPM", url, js_api=api, width=900, height=500)
 webview.start()
