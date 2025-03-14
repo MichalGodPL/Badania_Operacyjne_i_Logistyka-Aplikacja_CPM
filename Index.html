@@ -164,7 +164,10 @@
             // Call Python API to calculate CPM
             window.pywebview.api.calculate_cpm(tasks).then(response => {
                 document.getElementById('cpmResult').innerText = response.message;
-                drawCPMChart(response.critical_path);
+                const totalDuration = response.calculations.reduce((max, task) => Math.max(max, task.earliest_finish), 0);
+                const earliestFinish = response.calculations.reduce((max, task) => Math.max(max, task.earliest_finish), 0);
+                const latestFinish = response.calculations.reduce((max, task) => Math.max(max, task.latest_finish), 0);
+                drawCPMChart(totalDuration, earliestFinish, latestFinish);
                 generateCPMModel(response.critical_path);
                 displayCalculations(response.calculations);
                 showCard(2); // Switch to the second card to display the result
@@ -197,10 +200,10 @@
 
         }
 
-        function drawCPMChart(path) {
+        function drawCPMChart(totalDuration, earliestFinish, latestFinish) {
             const ctx = document.getElementById('cpmChart').getContext('2d');
-            const labels = path;
-            const data = path.map(task => task.duration);
+            const labels = ['Szacowane zakończenie modelu', 'Najwcześniejsze zakończenie', 'Najpóźniejsze zakończenie'];
+            const data = [totalDuration, earliestFinish, latestFinish];
 
             new Chart(ctx, {
                 type: 'bar',
