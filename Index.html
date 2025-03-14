@@ -265,13 +265,6 @@
             <h2>Tworzenie Tabelki</h2>
             <div class="cpm-row" style="display: flex; gap: 20px; align-items: center; justify-content: center;">
                 <div style="display: flex; gap: 15px; align-items: center; justify-content: center;">
-                    <label for="cpmMethod">Wybierz metodę CPM:</label>
-                    <select id="cpmMethod" onchange="updateMethod()" style="width: 180px;">
-                        <option value="Poprzednik">Poprzednik</option>
-                        <option value="Wyraz Następujący">Wyraz Następujący</option>
-                    </select>
-                </div>
-                <div style="display: flex; gap: 10px; align-items: center; justify-content: center;">
                     <label for="tableRows">Liczba wierszy:</label>
                     <input type="number" id="tableRows" value="5" style="width: 70px;">
                 </div>
@@ -341,7 +334,7 @@
             let th2 = document.createElement('th');
             th2.innerText = "Czas Trwania";
             let th3 = document.createElement('th');
-            th3.innerText = document.getElementById('cpmMethod').value;
+            th3.innerText = "Poprzednik";
             headerRow.append(th1, th2, th3);
             thead.appendChild(headerRow);
             table.appendChild(thead);
@@ -360,51 +353,12 @@
                         });
                     }
 
-                    // Dla "Wyraz Następujący" - format "liczba - liczba"
-                    if (j === 2 && document.getElementById('cpmMethod').value === 'Wyraz Następujący') {
-                        td.textContent = "-";
-                        td.addEventListener('input', (e) => {
-                            let value = e.target.textContent.replace(/[^\d-]/g, '');
-                            if (!value.includes('-')) {
-                                value = '-';
-                            }
-                            let [before, after = ""] = value.split('-');
-                            before = before.slice(0,8);
-                            after = after.slice(0,8);
-                            e.target.textContent = before + "-" + after;
-                        });
-                    }
-
-                    // Dla "Wyraz Następujący" - umożliwienie usunięcia całej zawartości
-                    if (j === 2 && document.getElementById('cpmMethod').value === 'Wyraz Następujący') {
-                        td.addEventListener('input', (e) => {
-                            let value = e.target.textContent.replace(/[^\d-]/g, '');
-                            e.target.textContent = value;
-                        });
-                    }
-
-                    function setCaretAfterDash(el) {
-                        let dashIndex = el.textContent.indexOf('-') + 1;
-                        let range = document.createRange();
-                        let sel = window.getSelection();
-                        range.setStart(el.firstChild, dashIndex);
-                        range.collapse(true);
-                        sel.removeAllRanges();
-                        sel.addRange(range);
-                        el.focus();
-                    }
-
                     tr.appendChild(td);
                 }
                 tbody.appendChild(tr);
             }
             table.appendChild(tbody);
             tableContainer.appendChild(table);
-        }
-
-        function updateMethod() {
-            document.getElementById('methodLabel').innerText =
-                document.getElementById('cpmMethod').value;
         }
 
         function saveTable() {
@@ -455,8 +409,8 @@
             // Call Python API to calculate CPM
             window.pywebview.api.calculate_cpm(tasks).then(response => {
                 document.getElementById('cpmResult').innerText = response.message;
-                drawCPMChart(response.path);
-                generateCPMModel(response.path);
+                drawCPMChart(response.critical_path);
+                generateCPMModel(response.critical_path);
                 displayCalculations(response.calculations);
                 showCard(2); // Switch to the second card to display the result
             }).catch(error => {
@@ -492,7 +446,7 @@
 
         function drawCPMChart(path) {
             const ctx = document.getElementById('cpmChart').getContext('2d');
-            const labels = path.map(task => task.name);
+            const labels = path;
             const data = path.map(task => task.duration);
 
             new Chart(ctx, {

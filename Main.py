@@ -1,6 +1,7 @@
 import webview
 import json
 import os
+from CPMLiczenie import calculate_cpm, visualize_cpm_graph, visualize_gantt_chart
 
 class API:
     def __init__(self):
@@ -23,14 +24,16 @@ class API:
         return {"message": f"Plik CSV zapisany na pulpicie: {file_path}"}
 
     def calculate_cpm(self, tasks):
-        method = tasks[0]["dependencies"].find("-") != -1
-        if method:
-            from CPMNastepnik import calculate_cpm_successor
-            result = calculate_cpm_successor(tasks)
-        else:
-            from CPMPoprzednik import calculate_cpm_predecessor
-            result = calculate_cpm_predecessor(tasks)
+        result = calculate_cpm(tasks)
         return result
+
+    def visualize_cpm_graph(self, tasks):
+        visualize_cpm_graph(tasks)
+        return {"message": "Graf CPM został wygenerowany"}
+
+    def visualize_gantt_chart(self, tasks, earliest_start):
+        visualize_gantt_chart(tasks, earliest_start)
+        return {"message": "Wykres Gantta został wygenerowany"}
 
 api = API()
 
