@@ -175,15 +175,7 @@
                     duration: calc.earliest_finish - calc.earliest_start,
                     earliest_start: calc.earliest_start
                 }));
-
-                // Call Python API to visualize Gantt chart
-                window.pywebview.api.visualize_gantt_chart(ganttTasks).then(resp => {
-                    let container = document.getElementById('ganttChartContainer');
-                    container.innerHTML = `<iframe src="${resp.gantt_path}" style="width:100%;height:600px;border:none;"></iframe>`;
-                }).catch(error => {
-                    console.error("Error generating Gantt chart:", error);
-                    alert("Wystąpił błąd podczas generowania wykresu Gantta.");
-                });
+                console.log("Tasks for Gantt:", ganttTasks); // Debug log
 
                 // Call Python API to visualize CPM graph
                 window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
