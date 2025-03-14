@@ -195,21 +195,6 @@
             const container = document.getElementById('cpmModelContainer');
             container.innerHTML = '';
 
-            path.forEach(task => {
-                const taskDiv = document.createElement('div');
-                taskDiv.style.border = '1px solid #2A2A2A';
-                taskDiv.style.padding = '10px';
-                taskDiv.style.marginBottom = '10px';
-                taskDiv.style.borderRadius = '5px';
-                taskDiv.style.backgroundColor = '#1A1A1A';
-
-                const taskName = document.createElement('h3');
-                taskName.innerText = `Zadanie: ${task}`;
-                taskName.style.margin = '0 0 10px 0';
-
-                taskDiv.appendChild(taskName);
-                container.appendChild(taskDiv);
-            });
         }
 
         function drawCPMChart(path) {
