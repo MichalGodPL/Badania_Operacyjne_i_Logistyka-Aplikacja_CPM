@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use("Agg")
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -51,11 +53,13 @@ def visualize_cpm_graph(tasks):
             for dep in task["dependencies"].split(','):
                 G.add_edge(dep.strip(), task["name"])
     
-    pos = nx.nx_agraph.graphviz_layout(G, prog='dot')
+    pos = nx.spring_layout(G)  # Replace graphviz_layout
     plt.figure(figsize=(12, 6))
     nx.draw(G, pos, with_labels=True, node_color='lightblue', edge_color='black', node_size=2000, font_size=10)
     plt.title("Graf CPM")
-    plt.show()
+    plt.savefig("cpm_graph.png")
+    plt.close()
+    return "cpm_graph.png"
 
 def visualize_gantt_chart(tasks, earliest_start):
     import plotly.express as px
@@ -67,4 +71,5 @@ def visualize_gantt_chart(tasks, earliest_start):
 
     fig = px.timeline(df, x_start="Start", x_end="Finish", y="name", title="Wykres Gantta")
     fig.update_yaxes(categoryorder="total ascending")
-    fig.show()
+    fig.write_html("gantt_chart.html")  # Save as HTML
+    return "gantt_chart.html"

@@ -27,13 +27,13 @@ class API:
         return result
 
     def visualize_cpm_graph(self, tasks):
-        visualize_cpm_graph(tasks)
-        return {"message": "Graf CPM został wygenerowany"}
+        graph_path = visualize_cpm_graph(tasks)
+        return {"message": "Graf CPM został wygenerowany", "graph_path": graph_path}
 
     def visualize_gantt_chart(self, tasks):
         earliest_start = {task["name"]: task["earliest_start"] for task in tasks}
-        visualize_gantt_chart(tasks, earliest_start)
-        return {"message": "Wykres Gantta został wygenerowany"}
+        gantt_path = visualize_gantt_chart(tasks, earliest_start)
+        return {"message": "Wykres Gantta został wygenerowany", "gantt_path": gantt_path}
 
 api = API()
 

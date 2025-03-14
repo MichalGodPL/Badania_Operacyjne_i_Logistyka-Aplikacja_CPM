@@ -43,6 +43,8 @@
             </div>
             <div id="cpmModelContainer" style="margin-top: 20px;"></div>
             <div id="cpmCalculationsContainer" style="margin-top: 20px;"></div>
+            <div id="cpmGraphContainer" style="margin-top: 20px;"></div>
+            <div id="ganttChartContainer" style="margin-top: 20px;"></div>
         </div>
     </div>
 
@@ -175,11 +177,21 @@
                 }));
 
                 // Call Python API to visualize Gantt chart
-                window.pywebview.api.visualize_gantt_chart(ganttTasks).then(response => {
-                    console.log(response.message);
+                window.pywebview.api.visualize_gantt_chart(ganttTasks).then(resp => {
+                    let container = document.getElementById('ganttChartContainer');
+                    container.innerHTML = `<iframe src="${resp.gantt_path}" style="width:100%;height:600px;border:none;"></iframe>`;
                 }).catch(error => {
                     console.error("Error generating Gantt chart:", error);
                     alert("Wystąpił błąd podczas generowania wykresu Gantta.");
+                });
+
+                // Call Python API to visualize CPM graph
+                window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
+                    let container = document.getElementById('cpmGraphContainer');
+                    container.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
+                }).catch(error => {
+                    console.error("Error generating CPM graph:", error);
+                    alert("Wystąpił błąd podczas generowania grafu CPM.");
                 });
             }).catch(error => {
                 console.error("Error generating CPM:", error);
