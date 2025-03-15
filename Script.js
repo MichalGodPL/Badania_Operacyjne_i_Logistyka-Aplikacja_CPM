@@ -129,14 +129,22 @@ function generateCPM() {
         }));
         console.log("Tasks for Gantt:", ganttTasks); // Debug log
 
-        // Call Python API to visualize CPM graph
-        window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
+        // Call Python API to visualize CPM graph (Activity on Node)
+        window.pywebview.api.visualize_cpm_graph_aon(tasks).then(resp => {
             let container = document.getElementById('cpmGraphContainer');
             container.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
-            showCard(3); // Switch to the third card to display the Gantt chart
         }).catch(error => {
-            console.error("Error generating CPM graph:", error);
-            alert("Wystąpił błąd podczas generowania grafu CPM.");
+            console.error("Error generating CPM graph (node):", error);
+            alert("Wystąpił błąd podczas generowania grafu CPM (node).");
+        });
+
+        // Call Python API to visualize CPM graph (Activity on Arrow)
+        window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
+            let container = document.getElementById('cpmGraphContainer');
+            container.innerHTML += `<img src="${resp.graph_path}" style="width: 100%; margin-top: 20px;"/>`;
+        }).catch(error => {
+            console.error("Error generating CPM graph (arrow):", error);
+            alert("Wystąpił błąd podczas generowania grafu CPM (arrow).");
         });
     }).catch(error => {
         console.error("Error generating CPM:", error);

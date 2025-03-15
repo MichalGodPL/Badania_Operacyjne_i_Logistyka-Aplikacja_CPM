@@ -1,6 +1,7 @@
 import webview
 import os
-from CPMLiczenie import calculate_cpm, visualize_cpm_graph
+from CPMLiczenie import calculate_cpm
+from CPMGrafy import visualize_cpm_graph, visualize_cpm_graph_aon
 
 class API:
     def __init__(self):
@@ -28,7 +29,11 @@ class API:
 
     def visualize_cpm_graph(self, tasks):
         graph_path = visualize_cpm_graph(tasks)
-        return {"message": "Graf CPM został wygenerowany", "graph_path": graph_path}
+        return {"message": "Graf CPM (Activity on Arrow) został wygenerowany", "graph_path": graph_path}
+
+    def visualize_cpm_graph_aon(self, tasks):
+        graph_path = visualize_cpm_graph_aon(tasks)
+        return {"message": "Graf CPM (Activity on Node) został wygenerowany", "graph_path": graph_path}
 
 api = API()
 
