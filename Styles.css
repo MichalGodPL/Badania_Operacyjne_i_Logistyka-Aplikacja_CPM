@@ -244,3 +244,19 @@ select {
 .arrow-right::before {
     transform: rotate(-45deg);
 }
+
+.rounded-image {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.critical-path {
+    border: 2px solid #1DB954;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 20px;
+    background-color: #2A2A2A;
+    color: #F5F5F5;
+    font-weight: bold;
+}

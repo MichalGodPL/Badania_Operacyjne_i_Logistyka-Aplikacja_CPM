@@ -146,10 +146,17 @@ function generateCPM() {
             console.error("Error generating CPM graph (arrow):", error);
             alert("Wystąpił błąd podczas generowania grafu CPM (arrow).");
         });
+
+        displayCriticalPath(response.critical_path); // Add this line
     }).catch(error => {
         console.error("Error generating CPM:", error);
         alert("Wystąpił błąd podczas generowania CPM.");
     });
+}
+
+function displayCriticalPath(criticalPath) {
+    const container = document.getElementById('cpmModelContainer');
+    container.innerHTML = `<div class="critical-path">Ścieżka Krytyczna: ${criticalPath.join(' -> ')}</div>`;
 }
 
 function generateCPMModel(path) {
