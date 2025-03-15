@@ -9,18 +9,18 @@ function showCard(cardNumber) {
         next.style.display = 'block';
         setTimeout(() => {
             next.classList.remove('hidden');
-        }, 10);
-    }, 500);
+        }, 10); // Small delay to trigger transition
+    }, 500); // Match the transition duration
     currentCard = cardNumber;
 }
 
 function prevCard() {
-    const nextCardNumber = currentCard === 1 ? 2 : 1;
+    const nextCardNumber = currentCard === 1 ? 3 : currentCard - 1;
     showCard(nextCardNumber);
 }
 
 function nextCard() {
-    const nextCardNumber = currentCard === 2 ? 1 : 2;
+    const nextCardNumber = currentCard === 3 ? 1 : currentCard + 1;
     showCard(nextCardNumber);
 }
 
@@ -28,11 +28,11 @@ function createTaskTable() {
     let rows = parseInt(document.getElementById('tableRows').value);
     let tableContainer = document.getElementById('tableContainer');
     tableContainer.innerHTML = "";
-
+    
     let table = document.createElement('table');
     let thead = document.createElement('thead');
     let headerRow = document.createElement('tr');
-
+    
     let th1 = document.createElement('th');
     th1.innerText = "Nazwa Czynności";
     let th2 = document.createElement('th');
@@ -42,7 +42,7 @@ function createTaskTable() {
     headerRow.append(th1, th2, th3);
     thead.appendChild(headerRow);
     table.appendChild(thead);
-
+    
     let tbody = document.createElement('tbody');
     for (let i = 0; i < rows; i++) {
         let tr = document.createElement('tr');
@@ -50,6 +50,7 @@ function createTaskTable() {
             let td = document.createElement('td');
             td.contentEditable = "true";
 
+            // Dla "Czas Trwania" - tylko cyfry
             if (j === 1) {
                 td.addEventListener('input', (e) => {
                     e.target.textContent = e.target.textContent.replace(/[^\d]/g, '');
@@ -82,10 +83,12 @@ function saveTable() {
         });
     });
 
+    // Call Python API to save tasks
     window.pywebview.api.add_task(tasks).then(response => {
         alert(response.message);
     }).catch(error => {
         console.error("Error saving tasks:", error);
+        alert("Wystąpił błąd podczas zapisywania tabeli.");
     });
 }
 
@@ -107,15 +110,107 @@ function generateCPM() {
         });
     });
 
+    // Call Python API to calculate CPM
     window.pywebview.api.calculate_cpm(tasks).then(response => {
         document.getElementById('cpmResult').innerText = response.message;
-        drawCPMChart(response.critical_path);
+        const totalDuration = response.calculations.reduce((max, task) => Math.max(max, task.earliest_finish), 0);
+        const earliestFinish = response.calculations.reduce((max, task) => Math.max(max, task.earliest_finish), 0);
+        const latestFinish = response.calculations.reduce((max, task) => Math.max(max, task.latest_finish), 0);
+        drawCPMChart(totalDuration, earliestFinish, latestFinish);
         generateCPMModel(response.critical_path);
         displayCalculations(response.calculations);
-        showCard(2);
+        showCard(2); // Switch to the second card to display the result
+
+        // Prepare tasks with earliest_start for Gantt chart
+        let ganttTasks = response.calculations.map(calc => ({
+            name: calc.task,
+            duration: calc.earliest_finish - calc.earliest_start,
+            earliest_start: calc.earliest_start
+        }));
+        console.log("Tasks for Gantt:", ganttTasks); // Debug log
+
+        // Call Python API to visualize CPM graph
+        window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
+            let container = document.getElementById('cpmGraphContainer');
+            container.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
+            showCard(3); // Switch to the third card to display the Gantt chart
+        }).catch(error => {
+            console.error("Error generating CPM graph:", error);
+            alert("Wystąpił błąd podczas generowania grafu CPM.");
+        });
     }).catch(error => {
         console.error("Error generating CPM:", error);
+        alert("Wystąpił błąd podczas generowania CPM.");
     });
+}
+
+function generateCPMModel(path) {
+    const container = document.getElementById('cpmModelContainer');
+    container.innerHTML = '';
+}
+
+function drawCPMChart(totalDuration, earliestFinish, latestFinish) {
+    const ctx = document.getElementById('cpmChart').getContext('2d');
+    const labels = ['Szacowane zakończenie modelu', 'Najwcześniejsze zakończenie', 'Najpóźniejsze zakończenie'];
+    const data = [totalDuration, earliestFinish, latestFinish];
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Czas trwania',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function displayCalculations(calculations) {
+    const container = document.getElementById('cpmCalculationsContainer');
+    container.innerHTML = '';
+
+    let table = document.createElement('table');
+    let thead = document.createElement('thead');
+    let headerRow = document.createElement('tr');
+
+    let headers = ["Zadanie", "Najwcześniejszy Start", "Najwcześniejsze Zakończenie", "Najpóźniejszy Start", "Najpóźniejsze Zakończenie"];
+    headers.forEach(header => {
+        let th = document.createElement('th');
+        th.innerText = header;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    let tbody = document.createElement('tbody');
+    calculations.forEach(calc => {
+        let tr = document.createElement('tr');
+        let tdTask = document.createElement('td');
+        tdTask.innerText = calc.task;
+        let tdES = document.createElement('td');
+        tdES.innerText = calc.earliest_start;
+        let tdEF = document.createElement('td');
+        tdEF.innerText = calc.earliest_finish;
+        let tdLS = document.createElement('td');
+        tdLS.innerText = calc.latest_start;
+        let tdLF = document.createElement('td');
+        tdLF.innerText = calc.latest_finish;
+        tr.append(tdTask, tdES, tdEF, tdLS, tdLF);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
 }
 
 function exportToCSV() {
@@ -141,11 +236,54 @@ function exportToCSV() {
     link.click();
     document.body.removeChild(link);
 
+    // Save CSV to desktop using Python API
     window.pywebview.api.save_csv_to_desktop(csvContent).then(response => {
         alert(response.message);
     }).catch(error => {
         console.error("Error exporting CSV:", error);
+        alert("Wystąpił błąd podczas eksportowania do CSV.");
     });
+}
+
+function uploadCSV(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const csvContent = e.target.result;
+        const rows = csvContent.split('\n').map(row => row.split(','));
+
+        let tableContainer = document.getElementById('tableContainer');
+        tableContainer.innerHTML = "";
+
+        let table = document.createElement('table');
+        let thead = document.createElement('thead');
+        let headerRow = document.createElement('tr');
+
+        rows[0].forEach(header => {
+            let th = document.createElement('th');
+            th.innerText = header;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        let tbody = document.createElement('tbody');
+        rows.slice(1).forEach(row => {
+            let tr = document.createElement('tr');
+            row.forEach(cell => {
+                let td = document.createElement('td');
+                td.contentEditable = "true";
+                td.innerText = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+    };
+    reader.readAsText(file);
 }
 
 document.addEventListener('keydown', function(event) {
