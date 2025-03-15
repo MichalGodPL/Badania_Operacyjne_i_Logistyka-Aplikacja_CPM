@@ -2,6 +2,7 @@ import webview
 import os
 from CPMLiczenie import calculate_cpm
 from CPMGrafy import visualize_cpm_graph, visualize_cpm_graph_aon
+from CPMGantt import visualize_gantt_chart
 
 class API:
     def __init__(self):
@@ -34,6 +35,10 @@ class API:
     def visualize_cpm_graph_aon(self, tasks):
         graph_path = visualize_cpm_graph_aon(tasks)
         return {"message": "Graf CPM (Activity on Node) został wygenerowany", "graph_path": graph_path}
+
+    def visualize_gantt_chart(self, tasks):
+        graph_path = visualize_gantt_chart(tasks)
+        return {"message": "Wykres Gantta został wygenerowany", "graph_path": graph_path}
 
 api = API()
 

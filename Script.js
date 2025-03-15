@@ -133,18 +133,28 @@ function generateCPM() {
         window.pywebview.api.visualize_cpm_graph_aon(tasks).then(resp => {
             let container = document.getElementById('cpmGraphContainer');
             container.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
+
+            // Call Python API to visualize CPM graph (Activity on Arrow)
+            window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
+                container.innerHTML += `<img src="${resp.graph_path}" style="width: 100%; margin-top: 20px;"/>`;
+            }).catch(error => {
+                console.error("Error generating CPM graph (arrow):", error);
+                alert("Wystąpił błąd podczas generowania grafu CPM (arrow).");
+            });
+
+            // Call Python API to visualize the Gantt chart in the third card
+            window.pywebview.api.visualize_gantt_chart(ganttTasks).then(resp => {
+                let ganttCardContainer = document.querySelector('#card3 #ganttChartContainer');
+                ganttCardContainer.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
+                // Show the third card for the Gantt chart
+                showCard(3);
+            }).catch(error => {
+                console.error("Error generating Gantt chart:", error);
+                alert("Wystąpił błąd podczas generowania wykresu Gantta.");
+            });
         }).catch(error => {
             console.error("Error generating CPM graph (node):", error);
             alert("Wystąpił błąd podczas generowania grafu CPM (node).");
-        });
-
-        // Call Python API to visualize CPM graph (Activity on Arrow)
-        window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
-            let container = document.getElementById('cpmGraphContainer');
-            container.innerHTML += `<img src="${resp.graph_path}" style="width: 100%; margin-top: 20px;"/>`;
-        }).catch(error => {
-            console.error("Error generating CPM graph (arrow):", error);
-            alert("Wystąpił błąd podczas generowania grafu CPM (arrow).");
         });
 
         displayCriticalPath(response.critical_path); // Add this line
@@ -235,15 +245,15 @@ function exportToCSV() {
         return;
     }
 
-    let csvContent = "data:text/csv;charset=utf-8,";
-    let rows = table.querySelectorAll('tr');
+    let csvContent = "";
+    let rows = table.querySelectorAll('tbody tr'); // Select only tbody rows to exclude headers
     rows.forEach(row => {
-        let cells = row.querySelectorAll('th, td');
-        let rowContent = Array.from(cells).map(cell => cell.innerText).join(",");
-        csvContent += rowContent + "\r\n";
+        let cells = row.querySelectorAll('td');
+        let rowContent = Array.from(cells).map(cell => cell.innerText.trim()).join(",");
+        csvContent += rowContent + "\n"; // Użycie \n zamiast \r\n dla lepszej zgodności
     });
 
-    let encodedUri = encodeURI(csvContent);
+    let encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
     let link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "tasks.csv");
