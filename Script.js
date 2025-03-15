@@ -65,33 +65,6 @@ function createTaskTable() {
     tableContainer.appendChild(table);
 }
 
-function saveTable() {
-    let table = document.querySelector('#tableContainer table');
-    if (!table) {
-        alert("Brak tabeli do zapisania.");
-        return;
-    }
-
-    let tasks = [];
-    let rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        let cells = row.querySelectorAll('td');
-        tasks.push({
-            name: cells[0].innerText,
-            duration: cells[1].innerText,
-            dependencies: cells[2].innerText
-        });
-    });
-
-    // Call Python API to save tasks
-    window.pywebview.api.add_task(tasks).then(response => {
-        alert(response.message);
-    }).catch(error => {
-        console.error("Error saving tasks:", error);
-        alert("Wystąpił błąd podczas zapisywania tabeli.");
-    });
-}
-
 function generateCPM() {
     let table = document.querySelector('#tableContainer table');
     if (!table) {
