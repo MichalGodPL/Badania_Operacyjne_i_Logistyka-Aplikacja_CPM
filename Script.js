@@ -119,8 +119,7 @@ function generateCPM() {
             window.pywebview.api.visualize_gantt_chart(ganttTasks).then(resp => {
                 let ganttCardContainer = document.querySelector('#card3 #ganttChartContainer');
                 ganttCardContainer.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
-                // Show the third card for the Gantt chart
-                showCard(3);
+                // showCard(3); // Comment or remove this to avoid switching to card 3 automatically
             }).catch(error => {
                 console.error("Error generating Gantt chart:", error);
                 alert("Wystąpił błąd podczas generowania wykresu Gantta.");
@@ -139,7 +138,7 @@ function generateCPM() {
 
 function displayCriticalPath(criticalPath) {
     const container = document.getElementById('cpmModelContainer');
-    container.innerHTML = `<div class="critical-path">Ścieżka Krytyczna: ${criticalPath.join(' -> ')}</div>`;
+    container.innerHTML = `<div class="critical-path">Ścieżka Krytyczna: ${criticalPath.join(' → ')}</div>`;
 }
 
 function generateCPMModel(path) {
