@@ -103,12 +103,12 @@ function generateCPM() {
         console.log("Tasks for Gantt:", ganttTasks); // Debug log
 
         // Call Python API to visualize CPM graph (Activity on Node)
-        window.pywebview.api.visualize_cpm_graph_aon(tasks).then(resp => {
+        window.pywebview.api.visualize_cpm_graph_aon(tasks, response.critical_path).then(resp => {
             let container = document.getElementById('cpmGraphContainer');
             container.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
 
             // Call Python API to visualize CPM graph (Activity on Arrow)
-            window.pywebview.api.visualize_cpm_graph(tasks).then(resp => {
+            window.pywebview.api.visualize_cpm_graph(tasks, response.critical_path).then(resp => {
                 container.innerHTML += `<img src="${resp.graph_path}" style="width: 100%; margin-top: 20px;"/>`;
             }).catch(error => {
                 console.error("Error generating CPM graph (arrow):", error);

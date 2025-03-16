@@ -28,12 +28,12 @@ class API:
         result = calculate_cpm(tasks)
         return result
 
-    def visualize_cpm_graph(self, tasks):
-        graph_path = visualize_cpm_graph(tasks)
+    def visualize_cpm_graph(self, tasks, critical_path=None):
+        graph_path = visualize_cpm_graph(tasks, critical_path)
         return {"message": "Graf CPM (Activity on Arrow) został wygenerowany", "graph_path": graph_path}
 
-    def visualize_cpm_graph_aon(self, tasks):
-        graph_path = visualize_cpm_graph_aon(tasks)
+    def visualize_cpm_graph_aon(self, tasks, critical_path=None):
+        graph_path = visualize_cpm_graph_aon(tasks, critical_path)
         return {"message": "Graf CPM (Activity on Node) został wygenerowany", "graph_path": graph_path}
 
     def visualize_gantt_chart(self, tasks):
