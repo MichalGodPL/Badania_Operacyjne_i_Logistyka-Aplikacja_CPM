@@ -245,12 +245,14 @@ function exportToCSV() {
 function uploadCSV(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = function(e) {
         const csvContent = e.target.result;
-        const rows = csvContent.split('\n').map(row => row.split(','));
-
+        const rows = csvContent
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line !== '')
+            .map(line => line.split(','));
         let tableContainer = document.getElementById('tableContainer');
         tableContainer.innerHTML = "";
 
@@ -258,23 +260,30 @@ function uploadCSV(event) {
         let thead = document.createElement('thead');
         let headerRow = document.createElement('tr');
 
-        rows[0].forEach(header => {
-            let th = document.createElement('th');
-            th.innerText = header;
-            headerRow.appendChild(th);
-        });
+        let th1 = document.createElement('th');
+        th1.innerText = "Nazwa Czynności";
+        let th2 = document.createElement('th');
+        th2.innerText = "Czas Trwania";
+        let th3 = document.createElement('th');
+        th3.innerText = "Poprzednik";
+        headerRow.append(th1, th2, th3);
         thead.appendChild(headerRow);
         table.appendChild(thead);
 
         let tbody = document.createElement('tbody');
-        rows.slice(1).forEach(row => {
+        rows.forEach(row => {
             let tr = document.createElement('tr');
-            row.forEach(cell => {
+            for (let i = 0; i < 3; i++) {
                 let td = document.createElement('td');
                 td.contentEditable = "true";
-                td.innerText = cell;
+                if (i === 1) {
+                    td.addEventListener('input', (e) => {
+                        e.target.textContent = e.target.textContent.replace(/[^\d]/g, '');
+                    });
+                }
+                td.innerText = row[i] ? row[i].trim() : "";
                 tr.appendChild(td);
-            });
+            }
             tbody.appendChild(tr);
         });
         table.appendChild(tbody);
