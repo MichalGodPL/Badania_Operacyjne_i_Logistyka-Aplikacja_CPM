@@ -10,7 +10,7 @@ function showCard(cardNumber) {
         setTimeout(() => {
             next.classList.remove('hidden');
         }, 10); // Small delay to trigger transition
-    }, 500); // Match the transition duration
+    }, 300); // Match the transition duration
     currentCard = cardNumber;
 }
 
