@@ -187,6 +187,7 @@ function displayCalculations(calculations, criticalPath) {
         "Najwcześniejsze Zakończenie",
         "Najpóźniejszy Start",
         "Najpóźniejsze Zakończenie",
+        "Rezerwa Czasu",
         "Czy ŚK?"
     ];
     headers.forEach(header => {
@@ -210,9 +211,11 @@ function displayCalculations(calculations, criticalPath) {
         tdLS.innerText = calc.latest_start;
         let tdLF = document.createElement('td');
         tdLF.innerText = calc.latest_finish;
+        let tdSlack = document.createElement('td');
+        tdSlack.innerText = calc.latest_finish - calc.earliest_finish;
         let tdIsCritical = document.createElement('td');
         tdIsCritical.innerText = criticalPath.includes(calc.task) ? "Tak" : "Nie";
-        tr.append(tdTask, tdES, tdEF, tdLS, tdLF, tdIsCritical);
+        tr.append(tdTask, tdES, tdEF, tdLS, tdLF, tdSlack, tdIsCritical);
         tbody.appendChild(tr);
     });
     table.appendChild(tbody);

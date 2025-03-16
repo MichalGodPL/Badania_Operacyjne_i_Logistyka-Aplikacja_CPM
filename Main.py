@@ -85,6 +85,6 @@ url = f"file:///{html_path}"
 
 # Tworzenie okna PyWebview i uruchamianie aplikacji
 
-webview.create_window("Metoda CPM", url, js_api=api, width=900, height=500)
+webview.create_window("Metoda CPM", url, js_api=api, width=1600, height=900)
 
 webview.start()

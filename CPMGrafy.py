@@ -31,21 +31,35 @@ def visualize_cpm_graph(tasks, critical_path=None): # Wizualizacja Grafu CPM Act
     nx.draw(G, pos, with_labels=False, node_color='green', edge_color='white', node_size=2000)
 
     node_labels = {n: G.nodes[n]['duration'] for n in G.nodes()}
+
     nx.draw_networkx_labels(G, pos, labels=node_labels, font_color='white', font_size=12)
 
     edge_labels = {}
+
     for task in tasks:
+
         if task["dependencies"] != "-":
+
             for dep in task["dependencies"].split(','):
+
                 edge_labels[(dep.strip(), task["name"])] = task["name"]
+
     nx.draw_networkx_edge_labels(
+
         G, pos,
+
         edge_labels=edge_labels,
+
         font_color='violet',
+
         font_size=20,
+
         label_pos=0.5,
+
         bbox=dict(alpha=0)
+
     )
+
 
     if critical_path:
 
