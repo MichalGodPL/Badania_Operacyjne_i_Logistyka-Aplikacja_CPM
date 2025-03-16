@@ -5,10 +5,9 @@ matplotlib.use("Agg")
 import networkx as nx
 
 import matplotlib.pyplot as plt
-
+import uuid  # Add this import to generate unique filenames
 
 def visualize_cpm_graph(tasks, critical_path=None): # Wizualizacja Grafu CPM Activity on Arrow
-
     G = nx.DiGraph()
 
     for task in tasks:
@@ -17,7 +16,6 @@ def visualize_cpm_graph(tasks, critical_path=None): # Wizualizacja Grafu CPM Act
             for dep in task["dependencies"].split(','):
                 G.add_edge(dep.strip(), task["name"])
 
-    # Change from nx.planar_layout to nx.spring_layout
     pos = nx.spring_layout(G)
 
     plt.figure(figsize=(12, 6))
@@ -41,15 +39,15 @@ def visualize_cpm_graph(tasks, critical_path=None): # Wizualizacja Grafu CPM Act
         nx.draw_networkx_edges(G, pos, edgelist=crit_edges, width=3, edge_color='yellow', arrows=True, arrowstyle='-|>', arrowsize=20)
 
     plt.title("Graf CPM (Activity on Arrow)", color='white')
-    plt.savefig("cpm_graph_aoa.png", facecolor='black')
+    filename = f"cpm_graph_aoa_{uuid.uuid4()}.png"  # Generate a unique filename
+    plt.savefig(filename, facecolor='black')
     plt.close()
     plt.clf()  # Clear the figure
 
-    return "cpm_graph_aoa.png"
+    return filename
 
 
 def visualize_cpm_graph_aon(tasks, critical_path=None):
-
     G = nx.DiGraph()
 
     for task in tasks:
@@ -70,7 +68,9 @@ def visualize_cpm_graph_aon(tasks, critical_path=None):
         nx.draw_networkx_edges(G, pos, edgelist=crit_edges, width=3, edge_color='yellow', arrows=True, arrowstyle='-|>', arrowsize=20)
 
     plt.title("Graf CPM (Activity on Node)", color='white')
-    plt.savefig("cpm_graph_aon.png", facecolor='black')
+    filename = f"cpm_graph_aon_{uuid.uuid4()}.png"  # Generate a unique filename
+    plt.savefig(filename, facecolor='black')
     plt.close()
+    plt.clf()  # Clear the figure
 
-    return "cpm_graph_aon.png"
+    return filename

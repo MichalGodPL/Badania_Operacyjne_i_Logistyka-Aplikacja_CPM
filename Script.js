@@ -100,7 +100,6 @@ function generateCPM() {
             duration: calc.earliest_finish - calc.earliest_start,
             earliest_start: calc.earliest_start
         }));
-        console.log("Tasks for Gantt:", ganttTasks); // Debug log
 
         // Call Python API to visualize CPM graph (Activity on Node)
         window.pywebview.api.visualize_cpm_graph_aon(tasks, response.critical_path).then(resp => {
@@ -110,19 +109,19 @@ function generateCPM() {
             // Call Python API to visualize CPM graph (Activity on Arrow)
             window.pywebview.api.visualize_cpm_graph(tasks, response.critical_path).then(resp => {
                 container.innerHTML += `<img src="${resp.graph_path}" style="width: 100%; margin-top: 20px;"/>`;
+
+                // Call Python API to visualize the Gantt chart in the third card
+                window.pywebview.api.visualize_gantt_chart(ganttTasks).then(resp => {
+                    let ganttCardContainer = document.querySelector('#card3 #ganttChartContainer');
+                    ganttCardContainer.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
+                    // showCard(3); // Comment or remove this to avoid switching to card 3 automatically
+                }).catch(error => {
+                    console.error("Error generating Gantt chart:", error);
+                    alert("Wystąpił błąd podczas generowania wykresu Gantta.");
+                });
             }).catch(error => {
                 console.error("Error generating CPM graph (arrow):", error);
                 alert("Wystąpił błąd podczas generowania grafu CPM (arrow).");
-            });
-
-            // Call Python API to visualize the Gantt chart in the third card
-            window.pywebview.api.visualize_gantt_chart(ganttTasks).then(resp => {
-                let ganttCardContainer = document.querySelector('#card3 #ganttChartContainer');
-                ganttCardContainer.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
-                // showCard(3); // Comment or remove this to avoid switching to card 3 automatically
-            }).catch(error => {
-                console.error("Error generating Gantt chart:", error);
-                alert("Wystąpił błąd podczas generowania wykresu Gantta.");
             });
         }).catch(error => {
             console.error("Error generating CPM graph (node):", error);

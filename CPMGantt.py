@@ -45,5 +45,7 @@ def visualize_gantt_chart(tasks):
     plt.savefig("gantt_chart.png", facecolor='black')
 
     plt.close()
+
+    plt.clf() 
     
     return "gantt_chart.png"
