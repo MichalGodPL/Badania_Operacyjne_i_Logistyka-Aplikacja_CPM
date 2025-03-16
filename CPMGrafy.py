@@ -6,6 +6,7 @@ import networkx as nx
 
 import matplotlib.pyplot as plt
 import uuid  # Add this import to generate unique filenames
+import os  # Add this import to delete files
 
 def visualize_cpm_graph(tasks, critical_path=None): # Wizualizacja Grafu CPM Activity on Arrow
     G = nx.DiGraph()
@@ -74,3 +75,11 @@ def visualize_cpm_graph_aon(tasks, critical_path=None):
     plt.clf()  # Clear the figure
 
     return filename
+
+def delete_temp_files(filenames):
+    for filename in filenames:
+        try:
+            if os.path.exists(filename):
+                os.remove(filename)
+        except PermissionError:
+            print(f"PermissionError: Could not delete {filename}. It might be in use.")

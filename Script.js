@@ -102,19 +102,22 @@ function generateCPM() {
         }));
 
         // Call Python API to visualize CPM graph (Activity on Node)
-        window.pywebview.api.visualize_cpm_graph_aon(tasks, response.critical_path).then(resp => {
+        window.pywebview.api.visualize_cpm_graph_aon(tasks, response.critical_path).then(respAON => {
             let container = document.getElementById('cpmGraphContainer');
-            container.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
+            container.innerHTML = `<img src="${respAON.graph_path}" style="width: 100%;"/>`;
 
             // Call Python API to visualize CPM graph (Activity on Arrow)
-            window.pywebview.api.visualize_cpm_graph(tasks, response.critical_path).then(resp => {
-                container.innerHTML += `<img src="${resp.graph_path}" style="width: 100%; margin-top: 20px;"/>`;
+            window.pywebview.api.visualize_cpm_graph(tasks, response.critical_path).then(respAOA => {
+                container.innerHTML += `<img src="${respAOA.graph_path}" style="width: 100%; margin-top: 20px;"/>`;
 
                 // Call Python API to visualize the Gantt chart in the third card
-                window.pywebview.api.visualize_gantt_chart(ganttTasks).then(resp => {
+                window.pywebview.api.visualize_gantt_chart(ganttTasks).then(respGantt => {
                     let ganttCardContainer = document.querySelector('#card3 #ganttChartContainer');
-                    ganttCardContainer.innerHTML = `<img src="${resp.graph_path}" style="width: 100%;"/>`;
+                    ganttCardContainer.innerHTML = `<img src="${respGantt.graph_path}" style="width: 100%;"/>`;
                     // showCard(3); // Comment or remove this to avoid switching to card 3 automatically
+
+                    // Delete temporary files
+                    window.pywebview.api.delete_temp_files([respAON.graph_path, respAOA.graph_path, respGantt.graph_path]);
                 }).catch(error => {
                     console.error("Error generating Gantt chart:", error);
                     alert("Wystąpił błąd podczas generowania wykresu Gantta.");

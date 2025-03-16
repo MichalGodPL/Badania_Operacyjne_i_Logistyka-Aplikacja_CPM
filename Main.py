@@ -73,6 +73,10 @@ class API:
 
         return {"message": "Wykres Gantta został wygenerowany", "graph_path": graph_path}
 
+    def delete_temp_files(self, filenames):
+        from CPMGrafy import delete_temp_files
+        delete_temp_files(filenames)
+
 api = API()
 
 
