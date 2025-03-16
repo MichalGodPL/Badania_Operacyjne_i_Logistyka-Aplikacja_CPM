@@ -1,4 +1,4 @@
-# Metoda CPM - Aplikacja
+# 🇵🇱 Metoda CPM - Aplikacja
 
 ## Opis projektu
 
@@ -51,7 +51,7 @@ Aplikacja do zarządzania projektami wykorzystująca metodę CPM (Critical Path 
 
 ---
 
-# CPM Method - Application
+# 🇺🇸 CPM Method - Application
 
 ## Project Description
 
