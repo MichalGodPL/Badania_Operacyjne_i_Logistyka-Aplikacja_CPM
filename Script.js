@@ -91,7 +91,7 @@ function generateCPM() {
         const latestFinish = response.calculations.reduce((max, task) => Math.max(max, task.latest_finish), 0);
         drawCPMChart(totalDuration, earliestFinish, latestFinish);
         generateCPMModel(response.critical_path);
-        displayCalculations(response.calculations);
+        displayCalculations(response.calculations, response.critical_path);
         showCard(2); // Switch to the second card to display the result
 
         // Prepare tasks with earliest_start for Gantt chart
@@ -173,7 +173,7 @@ function drawCPMChart(totalDuration, earliestFinish, latestFinish) {
     });
 }
 
-function displayCalculations(calculations) {
+function displayCalculations(calculations, criticalPath) {
     const container = document.getElementById('cpmCalculationsContainer');
     container.innerHTML = '';
 
@@ -181,7 +181,14 @@ function displayCalculations(calculations) {
     let thead = document.createElement('thead');
     let headerRow = document.createElement('tr');
 
-    let headers = ["Zadanie", "Najwcześniejszy Start", "Najwcześniejsze Zakończenie", "Najpóźniejszy Start", "Najpóźniejsze Zakończenie"];
+    let headers = [
+        "Zadanie",
+        "Najwcześniejszy Start",
+        "Najwcześniejsze Zakończenie",
+        "Najpóźniejszy Start",
+        "Najpóźniejsze Zakończenie",
+        "Czy ŚK?"
+    ];
     headers.forEach(header => {
         let th = document.createElement('th');
         th.innerText = header;
@@ -203,7 +210,9 @@ function displayCalculations(calculations) {
         tdLS.innerText = calc.latest_start;
         let tdLF = document.createElement('td');
         tdLF.innerText = calc.latest_finish;
-        tr.append(tdTask, tdES, tdEF, tdLS, tdLF);
+        let tdIsCritical = document.createElement('td');
+        tdIsCritical.innerText = criticalPath.includes(calc.task) ? "Tak" : "Nie";
+        tr.append(tdTask, tdES, tdEF, tdLS, tdLF, tdIsCritical);
         tbody.appendChild(tr);
     });
     table.appendChild(tbody);
