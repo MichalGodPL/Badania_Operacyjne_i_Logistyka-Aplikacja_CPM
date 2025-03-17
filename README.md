@@ -41,13 +41,16 @@ Aplikacja do zarządzania projektami wykorzystująca metodę CPM (Critical Path 
 ## Zrzuty ekranu
 
 ### Tworzenie tabeli zadań
-![Tworzenie tabeli zadań](attachments/Tabela.png)
+![Tworzenie tabeli zadań](Tabela.png)
 
 ### Wyniki, Grafy CPM
-![Wyniki, Grafy CPM](attachments/Wyniki1.png)
+![Wyniki, Grafy CPM](Wyniki1.png)
+![Wyniki, Grafy CPM](Wyniki2.png)
+![Wyniki, Grafy CPM](Wyniki3.png)
+
 
 ### Wykres Gantta
-![Wykres Gantta](C:\Users\Admin\Documents\GitHub\Badania_Operacyjne_i_Logistyka-Aplikacja_CPM\Gantt.png)
+![Wykres Gantta](Gantt.png)
 
 ---
 
@@ -94,10 +97,12 @@ A project management application using the Critical Path Method (CPM). It allows
 ## Screenshots
 
 ### Creating Task Table
-![Creating Task Table](attachments/Tabela.png)
+![Creating Task Table](Tabela.png)
 
 ### Results, CPM Graphs
 ![Results, CPM Graphs](attachments/Wyniki1.png)
+![Results, CPM Graphs](attachments/Wyniki2.png)
+![Results, CPM Graphs](attachments/Wyniki3.png)
 
 ### Gantt Chart
-![Gantt Chart](attachments/Gantt.png)
+![Gantt Chart](Gantt.png)
