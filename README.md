@@ -47,7 +47,7 @@ Aplikacja do zarządzania projektami wykorzystująca metodę CPM (Critical Path 
 ![Wyniki, Grafy CPM](attachments/Wyniki1.png)
 
 ### Wykres Gantta
-![Wykres Gantta](attachments/Gantt.png)
+![Wykres Gantta](C:\Users\Admin\Documents\GitHub\Badania_Operacyjne_i_Logistyka-Aplikacja_CPM\Gantt.png)
 
 ---
 
