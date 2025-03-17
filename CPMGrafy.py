@@ -52,7 +52,25 @@ def visualize_cpm_graph(tasks, critical_path=None): # Wizualizacja Grafu CPM Act
                 edge_labels[(dep.strip(), task["name"])] = task["name"]
 
 
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='violet', font_size=20, label_pos=0.5, bbox=dict(alpha=0))
+    nx.draw_networkx_edge_labels(
+
+        G,
+
+        pos,
+
+        edge_labels=edge_labels,
+
+        font_color='violet',
+
+        font_size=20,
+
+        label_pos=0.6,
+
+        bbox=dict(alpha=0),
+
+        verticalalignment='bottom'  # Add this argument
+        
+    )
 
 
     if critical_path:
