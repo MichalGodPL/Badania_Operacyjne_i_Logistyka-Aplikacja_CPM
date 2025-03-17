@@ -41,13 +41,13 @@ Aplikacja do zarządzania projektami wykorzystująca metodę CPM (Critical Path 
 ## Zrzuty ekranu
 
 ### Tworzenie tabeli zadań
-![Tworzenie tabeli zadań](attachments/screenshot1.png)
+![Tworzenie tabeli zadań](attachments/Tabela.png)
 
 ### Wyniki, Grafy CPM
-![Wyniki, Grafy CPM](attachments/screenshot2.png)
+![Wyniki, Grafy CPM](attachments/Wyniki1.png)
 
 ### Wykres Gantta
-![Wykres Gantta](attachments/screenshot3.png)
+![Wykres Gantta](attachments/Gantt.png)
 
 ---
 
@@ -94,10 +94,10 @@ A project management application using the Critical Path Method (CPM). It allows
 ## Screenshots
 
 ### Creating Task Table
-![Creating Task Table](attachments/screenshot1.png)
+![Creating Task Table](attachments/Tabela.png)
 
 ### Results, CPM Graphs
-![Results, CPM Graphs](attachments/screenshot2.png)
+![Results, CPM Graphs](attachments/Wyniki1.png)
 
 ### Gantt Chart
-![Gantt Chart](attachments/screenshot3.png)
+![Gantt Chart](attachments/Gantt.png)
