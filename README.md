@@ -100,9 +100,9 @@ A project management application using the Critical Path Method (CPM). It allows
 ![Creating Task Table](Tabela.png)
 
 ### Results, CPM Graphs
-![Results, CPM Graphs](attachments/Wyniki1.png)
-![Results, CPM Graphs](attachments/Wyniki2.png)
-![Results, CPM Graphs](attachments/Wyniki3.png)
+![Results, CPM Graphs](Wyniki1.png)
+![Results, CPM Graphs](Wyniki2.png)
+![Results, CPM Graphs](Wyniki3.png)
 
 ### Gantt Chart
 ![Gantt Chart](Gantt.png)
