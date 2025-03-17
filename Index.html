@@ -18,49 +18,97 @@
 
 
 <body>
+
     <div class="arrow arrow-left" onclick="prevCard()"></div>
+
     <div class="arrow arrow-right" onclick="nextCard()"></div>
+
     <div class="container">
+
         <div class="card full-width main-header">
-            <h1>METODA CPM APLIKACJA :3</h1>
+
+            <h1>METODA CPM APLIKACJA</h1>
+
         </div>
-        <!-- Card 1 -->
+
+        <!-- Karta 1 -->
+
         <div class="card full-width" id="card1">
+
             <h2>Tworzenie Tabelki</h2>
+
             <div class="cpm-row" style="display: flex; gap: 20px; align-items: center; justify-content: center;">
+
                 <div style="display: flex; gap: 15px; align-items: center; justify-content: center;">
+
                     <label for="tableRows">Liczba wierszy:</label>
+
                     <input type="number" id="tableRows" value="5" style="width: 70px;">
+
                 </div>
+
             </div>
+
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+
                 <button class="small-button" onclick="createTaskTable()">Utwórz</button>
+
                 <button class="small-button" onclick="document.getElementById('uploadCSV').click()">Wgraj CSV</button>
+
                 <input type="file" id="uploadCSV" accept=".csv" style="display: none;" onchange="uploadCSV(event)">
+
             </div>
+
             <div id="tableContainer"></div>
+
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+
                 <button class="small-button" onclick="generateCPM()">Wygeneruj</button>
+
                 <button class="small-button" onclick="exportToCSV()">Eksportuj do CSV</button>
+
             </div>
+
         </div>
-        <!-- Card 2 -->
+
+
+        <!-- Karta 2 -->
+
         <div class="card full-width hidden" id="card2">
+
             <h2>Wyniki, Grafy CPM</h2>
+
             <p id="cpmResult">Wyniki Pojawią się po Wygenorowaniu Tabeli.</p>
+
             <div class="chart-container">
+
                 <canvas id="cpmChart"></canvas>
+
             </div>
+
             <div id="cpmModelContainer" style="margin-top: 20px;"></div>
+
             <div id="cpmCalculationsContainer" style="margin-top: 20px;"></div>
+
             <div id="cpmGraphContainer" style="margin-top: 20px;"></div>
+
             <div id="ganttChartContainer" style="margin-top: 20px;"></div>
+            
         </div>
-        <!-- Card 3 -->
+
+
+        <!-- Karta 3 -->
+         
         <div class="card full-width hidden" id="card3">
+
             <h2>Wykres Gantta</h2>
+
             <div id="ganttChartContainer" style="margin-top: 20px;"></div>
+
         </div>
+
     </div>
+
 </body>
+
 </html>
