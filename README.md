@@ -38,20 +38,6 @@ Aplikacja do zarządzania projektami wykorzystująca metodę CPM (Critical Path 
 - Generowanie wykresów CPM (Activity on Node i Activity on Arrow)
 - Generowanie wykresów Gantta
 
-## Zrzuty ekranu
-
-### Tworzenie tabeli zadań
-![Tworzenie tabeli zadań](Tabela.png)
-
-### Wyniki, Grafy CPM
-![Wyniki, Grafy CPM](Wyniki1.png)
-![Wyniki, Grafy CPM](Wyniki2.png)
-![Wyniki, Grafy CPM](Wyniki3.png)
-
-
-### Wykres Gantta
-![Wykres Gantta](Gantt.png)
-
 ---
 
 # 🇺🇸 CPM Method - Application
@@ -102,7 +88,6 @@ A project management application using the Critical Path Method (CPM). It allows
 ### Results, CPM Graphs
 ![Results, CPM Graphs](Wyniki1.png)
 ![Results, CPM Graphs](Wyniki2.png)
-![Results, CPM Graphs](Wyniki3.png)
 
 ### Gantt Chart
 ![Gantt Chart](Gantt.png)

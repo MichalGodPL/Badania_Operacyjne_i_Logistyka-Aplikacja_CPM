@@ -4,7 +4,7 @@ body {
 
     color: #E0E0E0;
 
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: "SF Pro", Arial, sans-serif;
 
     font-weight: 400;
 
@@ -153,16 +153,16 @@ button {
 
     width: calc(100% - 40px);
 
-    transition: background 0.3s ease, transform 0.2s ease;
+    transition: background 0.4s ease, transform 0.3s ease;
 
 }
 
 
 button:hover {
 
-    background-color: #003f7f;
+    background-color: #003080;
 
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.05);
 
 }
 
@@ -181,12 +181,16 @@ button:hover {
 
     margin-top: 20px;
 
+    transition: background 0.4s ease, transform 0.3s ease;
+
 }
 
 
 .small-button:hover {
 
     background-color: #11632C;
+
+    transform: translateY(-3px) scale(1.08);
 
 }
 
